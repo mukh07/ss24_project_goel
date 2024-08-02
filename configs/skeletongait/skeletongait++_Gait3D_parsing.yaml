@@ -35,8 +35,7 @@ loss_cfg:
     log_accuracy: true
 
 model_cfg:
-  model: SkeletonGaitPPParsing
-  fusion: Attention
+  model: SkeletonGaitPP
   Backbone:
     in_channels: 3
     blocks:
