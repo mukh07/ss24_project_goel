@@ -2,13 +2,14 @@
 import os
 import argparse
 import torch
+import torch.distributed
 import torch.nn as nn
 from modeling import models
 from utils import config_loader, get_ddp_module, init_seeds, params_count, get_msg_mgr
-
+torch.distributed.init_process_group
 parser = argparse.ArgumentParser(description='Main program for opengait.')
 parser.add_argument('--local_rank', type=int, default=0,
-                    help="passed by torch.distributed.launch module")
+                     help="passed by torch.distributed.launch module")
 parser.add_argument('--local-rank', type=int, default=0,
                     help="passed by torch.distributed.launch module, for pytorch >=2.0")
 parser.add_argument('--cfgs', type=str,
@@ -59,7 +60,7 @@ def run_model(cfgs, training):
 
 
 if __name__ == '__main__':
-    torch.distributed.init_process_group('nccl', init_method='env://')
+    torch.distributed.init_process_group('nccl', init_method='env://', world_size = torch.cuda.device_count())
     if torch.distributed.get_world_size() != torch.cuda.device_count():
         raise ValueError("Expect number of available GPUs({}) equals to the world size({}).".format(
             torch.cuda.device_count(), torch.distributed.get_world_size()))

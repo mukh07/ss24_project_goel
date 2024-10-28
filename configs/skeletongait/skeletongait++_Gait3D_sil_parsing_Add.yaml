@@ -1,6 +1,6 @@
 data_cfg:
   dataset_name: Gait3D
-  dataset_root: /netscratch/goel/gait3d/Gait3D-merged-pkl
+  dataset_root: /netscratch/goel/gait3d/output_sil_parse
   dataset_partition: ./datasets/Gait3D/Gait3D.json
   num_workers: 1
   data_in_use: [True, True] # heatmap, sil
@@ -11,8 +11,8 @@ data_cfg:
 evaluator_cfg:
   enable_float16: true
   restore_ckpt_strict: true
-  restore_hint: 6000
-  save_name: SkeletonGaitPP # LowLevel
+  restore_hint: 60000
+  save_name: SkeletonGaitPP_sil_parse_Add # LowLevel
   eval_func: evaluate_Gait3D
   sampler:
     batch_shuffle: false
@@ -35,8 +35,8 @@ loss_cfg:
     log_accuracy: true
 
 model_cfg:
-  model: SkeletonGaitPP
-  fusion: Attention
+  model: SkeletonGaitPPSilParsing
+  fusion: Add
   Backbone:
     in_channels: 3
     blocks:
@@ -57,21 +57,22 @@ optimizer_cfg:
 scheduler_cfg:
   gamma: 0.1
   milestones: # Learning Rate Reduction at each milestones
-    - 2000
-    - 3000
-    - 4000
+    - 20000
+    - 30000
+    - 40000
   scheduler: MultiStepLR
 
 trainer_cfg:
   enable_float16: true # half_percesion float for memory reduction and speedup
   fix_BN: false
   log_iter: 100
+  with_test: true
   restore_ckpt_strict: true
   restore_hint: 0
-  save_iter: 1000
-  save_name: SkeletonGaitPP # LowLevel
+  save_iter: 10000
+  save_name: SkeletonGaitPP_sil_parse_Add # LowLevel
   sync_BN: true
-  total_iter: 6000
+  total_iter: 60000
   sampler:
     batch_shuffle: true
     batch_size:

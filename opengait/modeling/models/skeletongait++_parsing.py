@@ -9,7 +9,7 @@ from einops import rearrange
 
 import copy
 
-class SkeletonGaitPP(BaseModel):
+class SkeletonGaitPPParsing(BaseModel):
 
    def build_network(self, model_cfg):
        #B, C = [1, 4, 4, 1], 2
@@ -31,8 +31,7 @@ class SkeletonGaitPP(BaseModel):
 
        self.sil_layer1 = SetBlockWrapper(self.make_layer(BasicBlock2D, 32 * C, stride=[1, 1], blocks_num=B[0], mode='2d'))
        self.map_layer1 = copy.deepcopy(self.sil_layer1)
-       #self.fusion = AttentionFusion(32 * C)
-       #Added for supporting different fusion methods from defined in config file
+       #Added for supporting different fusion methods from defined in config
        if(model_cfg['fusion']=='Add'):
             print("Add Fusion")
             self.fusion = PlusFusion(32 * C)
@@ -42,7 +41,6 @@ class SkeletonGaitPP(BaseModel):
        else:
             print("Attention Fusion") 
             self.fusion = AttentionFusion(32 * C)
-
 
        self.layer2 = self.make_layer(BasicBlockP3D, 64 * C, stride=[2, 2], blocks_num=B[1], mode='p3d')
        self.layer3 = self.make_layer(BasicBlockP3D, 128 * C, stride=[2, 2], blocks_num=B[2], mode='p3d')
